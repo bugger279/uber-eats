@@ -24,6 +24,14 @@ let cartReducer = (state = initialState, action) => {
             return newState;
         }
 
+        case 'REMOVE_ALL': {
+            state.selectedItems.items = []
+            state.selectedItems.restaurantName = []
+            return {
+                state
+            }
+        }
+
         default:
             return state;
     }

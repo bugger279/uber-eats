@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { StyleSheet, Text, TouchableOpacity, View, Modal } from 'react-native'
 import { useSelector } from 'react-redux'
-import { collection, getDocs, addDoc, serverTimestamp } from 'firebase/firestore/lite';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore/lite';
 import { db } from '../../firebase';
 import OrderItem from './OrderItem'
 
@@ -10,27 +10,28 @@ export default function ViewCart({ navigation, restaurantName }) {
     const items = useSelector(state => state.cartReducer.selectedItems.items);
     const priceArray = items.map((item) => Number(item.price.replace('$', '')));
     const total = priceArray.reduce((prev, curr) => prev + curr, 0);
+
     const totalUSD = total.toLocaleString('en', {
         style: "currency",
         currency: 'USD'
     })
 
     const addToFirebase = async () => {
-        // let newData = await addDoc(collection(db, 'orders'), {
-        //     items,
-        //     restaurantName,
-        //     createdAt: serverTimestamp()
-        // })
-        // console.log(newData)
+        await addDoc(collection(db, 'orders'), {
+            items,
+            restaurantName,
+            createdAt: serverTimestamp()
+        })
+        
         setModalVisible(false);
-        navigation.navigate('OrderCompleted')
+        navigation.navigate('OrderCompleted');
     }
 
     return (
         <>
             <Modal
                 style={{
-                    backgroundColor: 'rgba(0,0,0,0.3)'
+                    // backgroundColor: 'rgba(0,0,0,0.3)',
                 }}
                 animationType='slide'
                 visible={modalVisible}
